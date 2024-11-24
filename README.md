@@ -73,7 +73,7 @@ The server will run on http://localhost:8080 by default. You can configure the p
 
 To start a new job, use the following command:
 
-curl -X POST http://localhost:8080/start
+```curl -X POST http://localhost:8080/start```
 
 **Example Response:**
 
@@ -87,9 +87,7 @@ curl -X POST http://localhost:8080/start
 
 To check the status of a specific job, use the following command:
 
-```bash
-curl -X GET "http://localhost:8080/status?job_id=12345"
-```
+```curl -X GET "http://localhost:8080/status?job_id=12345"```
 
 **Example Response (while processing):**
 
