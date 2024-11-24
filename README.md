@@ -87,7 +87,9 @@ curl -X POST http://localhost:8080/start
 
 To check the status of a specific job, use the following command:
 
-```curl -X GET "http://localhost:8080/status?job_id=12345"```
+```bash
+curl -X GET "http://localhost:8080/status?job_id=12345"
+```
 
 **Example Response (while processing):**
 
