@@ -1,6 +1,6 @@
 # 🚀 **Video Translator** 🌐
 
-**Video Translator** is a simulation of an AI-powered video translation service. It demonstrates a robust client-server architecture with logging, configuration, and seamless testing workflows. This project can help you understand how to build and simulate asynchronous job processing systems.
+**Video Translator** is a simulation of an AI-powered video translation service. It demonstrates a client-server architecture with logging, configuration, and seamless testing workflows. This project can help you understand how to build and simulate asynchronous job processing systems.
 
 ## **📌 Key Features**
 
