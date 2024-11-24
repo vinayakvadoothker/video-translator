@@ -67,6 +67,46 @@ The server will run on http://localhost:8080 by default. You can configure the p
 
 ---
 
+### **Testing the API with curl**
+
+#### **1. Start a Job**
+
+To start a new job, use the following command:
+
+curl -X POST http://localhost:8080/start
+
+**Example Response:**
+
+```json
+{
+  "job_id": "12345"
+}
+```
+
+#### **2. Check Job Status**
+
+To check the status of a specific job, use the following command:
+
+```curl -X GET "http://localhost:8080/status?job_id=12345"```
+
+**Example Response (while processing):**
+
+```json
+{
+  "job_id": "12345",
+  "status": "pending"
+}
+```
+Example Response (on completion):
+
+```bash
+{
+  "job_id": "12345",
+  "status": "completed"
+}
+```
+---
+
 ### Using the Client
 
 1. **Create a Client**  
