@@ -37,7 +37,6 @@
 
 ### **1. Prerequisites**
 - **Go** (1.20+)
-- Docker *(optional, for containerization)*
 
 ### **2. Installation**
 
@@ -139,7 +138,7 @@ video-translator/
 │   ├── main.go            # Server implementation
 ├── tests/                 # Integration tests
 │   ├── integration_test.go
-├── .env                   # Environment variables (optional)
+├── .env                   # Environment variables 
 ├── .gitignore             # Ignored files
 ├── go.mod                 # Go module dependencies
 ├── go.sum                 # Dependency checksums
