@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Client represents the video translator client
@@ -14,15 +16,21 @@ type Client struct {
 	HTTPClient *http.Client  // HTTP client for requests
 	PollDelay  time.Duration // Initial delay for polling
 	MaxRetries int           // Max retries for polling
+	logger     *logrus.Logger
 }
 
 // NewClient creates a new instance of the client
 func NewClient(baseURL string) *Client {
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetLevel(logrus.InfoLevel)
+
 	return &Client{
 		BaseURL:    baseURL,
 		HTTPClient: &http.Client{Timeout: 10 * time.Second},
 		PollDelay:  1 * time.Second, // Default polling delay
 		MaxRetries: 10,              // Default max retries
+		logger:     logger,
 	}
 }
 
@@ -30,24 +38,31 @@ func NewClient(baseURL string) *Client {
 func (c *Client) StartJob() (string, error) {
 	resp, err := c.HTTPClient.Post(fmt.Sprintf("%s/start", c.BaseURL), "application/json", nil)
 	if err != nil {
+		c.logger.WithError(err).Error("Failed to start job")
 		return "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusCreated {
-		return "", fmt.Errorf("failed to start job, status code: %d", resp.StatusCode)
+		err := fmt.Errorf("failed to start job, status code: %d", resp.StatusCode)
+		c.logger.WithError(err).Error("StartJob failed")
+		return "", err
 	}
 
 	var result map[string]string
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		c.logger.WithError(err).Error("Failed to decode start job response")
 		return "", err
 	}
 
 	jobID, ok := result["job_id"]
 	if !ok {
-		return "", errors.New("invalid response: missing job_id")
+		err := errors.New("invalid response: missing job_id")
+		c.logger.WithError(err).Error("StartJob response missing job_id")
+		return "", err
 	}
 
+	c.logger.WithField("job_id", jobID).Info("Job started successfully")
 	return jobID, nil
 }
 
@@ -61,8 +76,15 @@ func (c *Client) PollStatus(jobID string) (string, error) {
 
 		status, err := c.getStatus(jobID)
 		if err != nil {
+			c.logger.WithError(err).WithField("job_id", jobID).Error("Failed to get job status")
 			return "", err
 		}
+
+		c.logger.WithFields(logrus.Fields{
+			"job_id": jobID,
+			"status": status,
+			"retry":  retries,
+		}).Info("Polled job status")
 
 		if status == "completed" || status == "error" {
 			return status, nil
@@ -72,7 +94,9 @@ func (c *Client) PollStatus(jobID string) (string, error) {
 		delay *= 2
 	}
 
-	return "", fmt.Errorf("job %s did not complete within the retry limit", jobID)
+	err := fmt.Errorf("job %s did not complete within the retry limit", jobID)
+	c.logger.WithError(err).WithField("job_id", jobID).Error("PollStatus failed")
+	return "", err
 }
 
 // getStatus gets the current status of a job

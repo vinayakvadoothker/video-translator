@@ -1,4 +1,5 @@
 # Binaries
+/video-translator
 *.exe
 *.exe~
 *.dll
@@ -13,5 +14,14 @@
 # Logs
 *.log
 
-# Editor-specific files
+# Dependency directories (handled by Go modules)
+/vendor/
+
+# Go module cache
+go.sum
+
+# Editor and OS-specific files
 .DS_Store
+.idea/
+.vscode/
+*.swp
